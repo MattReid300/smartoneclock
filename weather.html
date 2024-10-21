@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport'
+        content='width=device-width, initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no'>
+    <title>Weather</title>
+    <link rel="stylesheet" type="text/css" href="common.css">
+    </link>
+    <script src="common.js"></script>
+</head>
+
+<body>
+    <div class="header">Smart.One Clock</div>
+    <div class="template1">
+        <div class="buttons">
+            <form action="index.html" target="_self">
+                <button type="submit" class="title_left_button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" id="back-arrow"
+                        class="bi bi-arrow-left-short" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5" />
+                    </svg>
+                    <span>Main Menu</span>
+                </button>
+            </form>
+            <button onclick='weather_settings_save()' class="title_right_button">Save</button>
+        </div>
+        <div class="page_title">Weather</div>
+        <div class='page_content'>
+            <div class="page_group">
+                <div id="process_text" class="my_tip_text">
+                    Input City Name or City Code. You may refer to
+                    <br />https://www.geonames.org/
+                    <br />to find your city code.
+                </div>
+                <div class="select_item">
+                    <label class="menu_title">City Name (or Code)</label>
+                    <br />
+                    <input id='city_name_id' name='city_name_id' value='' type='text' />
+                </div>
+                <div class="select_item">
+                    <label class="menu_title">Temperature format</label>
+                    <br />
+                    <select name='temp_format' id='temp_format'>
+                        <option name='temp_format' value='0'>°C</option>
+                        <option name='temp_format' value='1'>°F</option>
+                    </select>
+                </div>
+                <div class="select_item">
+                    <label class="menu_title">Update Interval</label>
+                    <br />
+                    <select name='update_interval' id='update_interval'>
+                        <!-- <option name='update_interval' value='1'>10 mins</option>
+                    <option name='update_interval' value='2'>20 mins</option> -->
+                        <option name='update_interval' value='3'>30 mins</option>
+                        <option name='update_interval' value='4'>40 mins</option>
+                        <option name='update_interval' value='5'>50 mins</option>
+                    </select>
+                </div>
+                <div class="select_item">
+                    <label class="menu_title">Air quality</label>
+                    <br />
+                    <select name='aqi_type' id='aqi_type'>
+                        <option name='aqi_type' value='0'>EU AQI</option>
+                        <option name='aqi_type' value='1'>US AQI</option>
+                        <option name='aqi_type' value='2'>PM10</option>
+                        <option name='aqi_type' value='3'>PM2.5</option>
+                    </select>
+                </div>
+                <!-- <div class="select_item" id="api_key_input_div">
+                    <label class="menu_title">API Key</label>
+                    <br />
+                    <input id='api_key' name='api_key' value='' type='password' />
+                </div>
+                <br>
+                <div class="my_tip_text">
+                    To obtain your free API Key, please register at weatherbit.io
+                </div> -->
+            </div>
+        </div>
+        <p class="page_foot">Smart.One Clock</p>
+    </div>
+    <script>
+        window.onload = function () {
+            showLoading();
+            http("weather_page_init", function (responseText) {
+                hideLoading();
+                //responseText="shanghai|1|2|2"; // for test.
+                //console.log(responseText);
+                let city_name = responseText.split("|")[0];
+                document.getElementById("city_name_id").value = city_name;
+                let temp_format = responseText.split("|")[1];
+                document.getElementById("temp_format").value = temp_format;
+                let update_interval = responseText.split("|")[2];
+                document.getElementById("update_interval").value = update_interval;
+                let aqi_type = responseText.split("|")[3];
+                document.getElementById("aqi_type").value = aqi_type;
+            });
+        }
+
+        function weather_settings_save() {
+            showLoading("Saving");
+
+            let city_name = document.getElementById("city_name_id").value;
+            let temp_format = document.getElementById("temp_format").value;
+            let update_interval = document.getElementById("update_interval").value;
+            //let api_key = document.getElementById('api_key').value;
+            let aqi_type = document.getElementById("aqi_type").value;
+
+            let params = {
+                "city_name_id": city_name,
+                "temp_format": temp_format,
+                "update_interval": update_interval,
+                "aqi_type": aqi_type,
+            };
+
+            http("weather_save_config", function (responseText) {
+                hideLoading();
+                if (responseText == 'success') {
+                    showSuccessTip('Save done');
+                } else {
+                    showFailTip('Save failed');
+                }
+            }, params);
+        }
+    </script>
+</body>
+
+</html>

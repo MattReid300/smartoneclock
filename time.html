@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport'
+        content='width=device-width, initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no'>
+    <title>Time</title>
+    <link rel="stylesheet" type="text/css" href="common.css">
+    </link>
+    <script src="common.js"></script>
+</head>
+
+<body>
+    <div class="header">Smart.One Clock</div>
+    <div class="template1">
+        <div class="buttons">
+            <form action="index.html" target="_self">
+                <button type="submit" class="title_left_button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" id="back-arrow"
+                        class="bi bi-arrow-left-short" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5" />
+                    </svg>
+                    <span>Main Menu</span>
+                </button>
+            </form>
+            <button onclick='time_settings_save()' class="title_right_button">Save</button>
+        </div>
+        <div class="page_title">Time</div>
+        <div class='page_content'>
+            <div class="page_group">
+                <div class="select_item">
+                    <label class="menu_title">Time Format</label>
+                    <select name='timeformats' id='timeformats'>
+                        <option name='timeformat' value='0'>12-hour format</option>
+                        <option name='timeformat' value='1'>24-hour format</option>
+                    </select>
+                </div>
+                <div class="select_item">
+                    <label class="menu_title">Date Format</label>
+                    <select name='dateformats' id='dateformats'>
+                        <option name='dateformat' value='0'>1 Jan</option>
+                        <option name='dateformat' value='1'>Jan 1</option>
+                        <option name='dateformat' value='2'>1 Jan 2024</option>
+                        <option name='dateformat' value='3'>Jan 1, 2024</option>
+                    </select>
+                </div>
+                <div class="select_item">
+                    <label class="menu_title">Enable colon blink</label>
+                    <input type='checkbox' id='colon_blink_checkbox' name='colon_blink_checkbox' />
+                </div>
+                <div class="select_item">
+                    <label class="menu_title">Enable DST</label>
+                    <input type='checkbox' id='DST_checkbox' name='DST_checkbox' />
+                </div>
+                <div class="select_item">
+                    <label class="menu_title">Time Zone</label>
+                    <select name='timezones' id='timezones'>
+                        <option name='timezone' value='W12'>UTC-12:00</option>
+                        <option name='timezone' value='W11'>UTC-11:00</option>
+                        <option name='timezone' value='W10'>UTC-10:00</option>
+                        <option name='timezone' value='W09'>UTC-09:00</option>
+                        <option name='timezone' value='W08'>UTC-08:00</option>
+                        <option name='timezone' value='W07'>UTC-07:00</option>
+                        <option name='timezone' value='W06'>UTC-06:00</option>
+                        <option name='timezone' value='W05'>UTC-05:00</option>
+                        <option name='timezone' value='W04'>UTC-04:00</option>
+                        <option name='timezone' value='W03'>UTC-03:00</option>
+                        <option name='timezone' value='W02'>UTC-02:00</option>
+                        <option name='timezone' value='W01'>UTC-01:00</option>
+                        <option name='timezone' value='000'>UTC±00:00</option>
+                        <option name='timezone' value='E01'>UTC+01:00</option>
+                        <option name='timezone' value='E02'>UTC+02:00</option>
+                        <option name='timezone' value='E03'>UTC+03:00</option>
+                        <option name='timezone' value='E04'>UTC+04:00</option>
+                        <option name='timezone' value='E05'>UTC+05:00</option>
+                        <option name='timezone' value='E06'>UTC+06:00</option>
+                        <option name='timezone' value='E07'>UTC+07:00</option>
+                        <option name='timezone' value='E08'>UTC+08:00</option>
+                        <option name='timezone' value='E09'>UTC+09:00</option>
+                        <option name='timezone' value='E10'>UTC+10:00</option>
+                        <option name='timezone' value='E11'>UTC+11:00</option>
+                        <option name='timezone' value='E12'>UTC+12:00</option>
+                    </select>
+                </div>
+                <br />
+                <br />
+                <label class="menu_title">Time Number Color (for Funny Clock)</label>
+                <div class="color_pick_div">
+                    <div class="color_pick_item">
+                        <label class="menu_title">Hour1</label>
+                        <input type="color" id="hour1_color" class="color_picker" onchange="colorChange(this)" />
+                    </div>
+                    <div class="color_pick_item">
+                        <label class="menu_title">Hour2</label>
+                        <input type="color" id="hour2_color" class="color_picker" onchange="colorChange(this)" />
+                    </div>
+                    <div class="color_pick_item">
+                        <label class="menu_title">Minute1</label>
+                        <input type="color" id="minute1_color" class="color_picker" onchange="colorChange(this)" />
+                    </div>
+                    <div class="color_pick_item">
+                        <label class="menu_title">Minute2</label>
+                        <input type="color" id="minute2_color" class="color_picker" onchange="colorChange(this)" />
+                    </div>
+                </div>
+                <br />
+                <label class="menu_title">NTP Server</label>
+                <div class="ntp_server_div">
+                    <div class='item_ntp'>
+                        <input type='radio' id='pool.ntp.org' name='ntpserver' value='pool.ntp.org' />pool.ntp.org
+                    </div>
+                    <div class='item_ntp'>
+                        <input type='radio' id='time1.apple.com' name='ntpserver'
+                            value='time1.apple.com' />time1.apple.com
+                    </div>
+                    <div class='item_ntp'>
+                        <input type='radio' id='time2.apple.com' name='ntpserver'
+                            value='time2.apple.com' />time2.apple.com
+                    </div>
+                    <div class='item_ntp'>
+                        <input type='radio' id='time1.google.com' name='ntpserver'
+                            value='time1.google.com' />time1.google.com
+                    </div>
+                    <div class='item_ntp'>
+                        <input type='radio' id='time2.google.com' name='ntpserver'
+                            value='time2.google.com' />time2.google.com
+                    </div>
+                    <div class='item_ntp'>
+                        <input type='radio' id='ntp_customer' name='ntpserver' value='ntp_customer' />Custom:
+                        <input id='ntpserver_customer' name='ntpserver_customer' value='' type='text' />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p class="page_foot">Smart.One Clock</p>
+    </div>
+    <script>
+        function colorChange(e) {
+            console.log(document.getElementById("hour1_color").value)
+        }
+
+        window.onload = function () {
+            showLoading();
+            http("time_page_init", function (responseText) {
+                hideLoading();
+                //responseText = '1|2|1|1|E08|fefe00|080808|ff0000|0000ff|XcustX_ntp3.aliyun.com'; // for test.
+                //console.log(responseText);
+                let time_format = responseText.split("|")[0];
+                let date_format = responseText.split("|")[1];
+                let enable_colon_blink = responseText.split("|")[2];
+                let enable_dst = responseText.split("|")[3];
+                let timezone = responseText.split("|")[4];
+                document.getElementById("timeformats").value = time_format;
+                document.getElementById("dateformats").value = date_format;
+                if (enable_colon_blink == '0') {
+                    document.getElementById("colon_blink_checkbox").checked = false;
+                } else {
+                    document.getElementById("colon_blink_checkbox").checked = true;
+                }
+                if (enable_dst == '0') {
+                    document.getElementById("DST_checkbox").checked = false;
+                } else {
+                    document.getElementById("DST_checkbox").checked = true;
+                }
+                document.getElementById("timezones").value = timezone;
+
+                let hour1Color = responseText.split("|")[5];
+                let hour2Color = responseText.split("|")[6];
+                let min1Color = responseText.split("|")[7];
+                let min2Color = responseText.split("|")[8];
+                document.getElementById("hour1_color").value = "#" + hour1Color;
+                document.getElementById("hour2_color").value = "#" + hour2Color;
+                document.getElementById("minute1_color").value = "#" + min1Color;
+                document.getElementById("minute2_color").value = "#" + min2Color;
+
+                let ntpserver_address = responseText.split("|")[9];
+                if (ntpserver_address.indexOf("XcustX_") >= 0) {
+                    document.getElementById("ntp_customer").checked = true;
+                    document.getElementById("ntpserver_customer").value = ntpserver_address.replace("XcustX_", "");
+                } else {
+                    document.getElementById(ntpserver_address).checked = true;
+                }
+            });
+        }
+
+        function time_settings_save() {
+            showLoading("Saving");
+            let time_format = document.getElementById("timeformats").value;
+            let date_format = document.getElementById("dateformats").value;
+            let enable_colon_blink = document.getElementById("colon_blink_checkbox").checked;
+            let enable_dst = document.getElementById("DST_checkbox").checked;
+            let timezone = document.getElementById("timezones").value;
+            let hour1Color = document.getElementById("hour1_color").value;
+            let hour2Color = document.getElementById("hour2_color").value;
+            let min1Color = document.getElementById("minute1_color").value;
+            let min2Color = document.getElementById("minute2_color").value;
+
+            let radio_checked;
+            let radios = document.getElementsByName("ntpserver");
+            for (var i = 0; i < radios.length; i++) {
+                if (radios[i].checked) {
+                    radio_checked = radios[i];
+                    break;
+                }
+            }
+
+            if (radio_checked.value == "ntp_customer" && document.getElementById('ntpserver_customer').value == "") {
+                alert("Set custom NTP server please.");
+                hideLoading();
+                return;
+            }
+
+            let params = {
+                "timeformat": time_format,
+                "dateformat": date_format,
+                "colon_blink": (enable_colon_blink ? '1' : '0'),
+                "dst": (enable_dst ? '1' : '0'),
+                "timezone": timezone,
+                "hour1_color": hour1Color.slice(1),
+                "hour2_color": hour2Color.slice(1),
+                "min1_color": min1Color.slice(1),
+                "min2_color": min2Color.slice(1),
+                'ntpserver': radio_checked.value,
+                'ntpserver_customer': document.getElementById('ntpserver_customer').value,
+            };
+            //console.log(params);
+            http("time_save_config", function (responseText) {
+                hideLoading();
+                if (responseText == 'success') {
+                    showSuccessTip("Save done");
+                } else {
+                    showFailTip('Save failed');
+                }
+            }, params);
+        }
+    </script>
+</body>
+
+</html>

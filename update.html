@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport'
+        content='width=device-width, initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no'>
+    <title>Firmware Update</title>
+    <link rel="stylesheet" type="text/css" href="common.css">
+    </link>
+    <script src="common.js"></script>
+</head>
+
+<body>
+    <div class="header">Smart.One Clock</div>
+    <div class="template1">
+        <form action="settings.html" target="_self">
+            <button type="submit" class="title_left_button" style="padding-top: 10px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" id="back-arrow"
+                    class="bi bi-arrow-left-short" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                        d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5" />
+                </svg>
+                <span>Settings</span>
+            </button>
+        </form>
+        <div class="page_title">Firmware Update</div>
+        <!--form name='input' action='/update' method='POST'>
+        <button onclick='update_device()' class="title_right_button">Firmware Update</button>
+    </form-->
+        <div class='page_content'>
+            <div class="page_group">
+                <div class="menu_title">Current version: <label id="version_text">unknown</label></div>
+            </div>
+            <br>
+            <p>Firmware:</p>
+            <form method='POST' action='' enctype='multipart/form-data' class="select_item" style="justify-content: space-evenly;">
+                <input type="file" accept='.bin,.bin.gz' multiple='false' name="firmware" id="firmware_file"
+                    onchange="selectFirmware()">
+                <input id='firmware_update' type='button' value='Update Firmware' onclick='updateFirmware()'
+                    disabled="true">
+            </form>
+            <br>
+            <p>FileSystem:</p>
+            <form method='POST' action='' enctype='multipart/form-data'  class="select_item" style="justify-content: space-evenly;">
+                <input type="file" accept='.bin,.bin.gz' multiple='false' name="filesystem" id="fs_file"
+                    onchange="selectFS()">
+                <input id='fs_update' type='button' value='Update Filesystem' onclick='updateFileSystem()'
+                    disabled="true">
+            </form>
+            <p id="update_status"></p>
+        </div>
+        <p class="page_foot">Smart.One Clock</p>
+    </div>
+    <script>
+        window.onload = function () {
+            showLoading();
+            http("get_version", function (res) {
+                hideLoading();
+                document.getElementById("version_text").innerText = res;
+            })
+        }
+
+        var formDataFirmware;
+        function selectFirmware() {
+            formDataFirmware = new FormData();
+            let file = document.getElementById('firmware_file').files[0];
+            let file_type = file.name.split('.')[1];
+            file_type = file_type.toLowerCase();
+
+            document.getElementById("firmware_update").disabled = false;
+            formDataFirmware.append('firmware', file, file.name);
+        }
+
+        function updateFirmware() {
+            var request = new XMLHttpRequest();
+            request.open('POST', '/update');
+            request.onloadstart = function () {
+                document.getElementById("update_status").innerText = "Updating";
+                document.getElementById("firmware_file").disabled = true;
+                document.getElementById("firmware_update").disabled = true;
+            }
+            request.onreadystatechange = function () {
+                if (request.readyState == XMLHttpRequest.DONE && request.status == 200) {
+                    document.getElementById("update_status").innerText = "Update done";
+                    document.getElementById("firmware_file").disabled = false;
+                    document.getElementById("firmware_file").value = null;
+                    document.getElementById("firmware_update").disabled = true;
+
+                    var responseText = request.responseText;
+                    //console.log(responseText);
+                    if (responseText.indexOf("Update Success") !== -1) {
+                        window.location.href = "index.html";
+                    } else {
+                        document.getElementById("update_status").innerText = "Update failed";
+                    }
+                }
+            }
+            request.send(formDataFirmware);
+        }
+        //*
+        var formDataFS;
+        function selectFS() {
+            formDataFS = new FormData();
+            let file = document.getElementById('fs_file').files[0];
+            let file_type = file.name.split('.')[1];
+            file_type = file_type.toLowerCase();
+
+            document.getElementById("fs_update").disabled = false;
+            formDataFS.append('filesystem', file, file.name);
+            console.log("\n" + "Update " + file.name + "\n");
+        }
+
+        function updateFileSystem() {
+            var request = new XMLHttpRequest();
+            request.open('POST', '/update');
+            request.onloadstart = function () {
+                document.getElementById("update_status").innerText = "Updating";
+                document.getElementById("fs_file").disabled = true;
+                document.getElementById("fs_update").disabled = true;
+            }
+            request.onreadystatechange = function () {
+                if (request.readyState == XMLHttpRequest.DONE && request.status == 200) {
+                    document.getElementById("update_status").innerText = "Update done";
+                    document.getElementById("fs_file").disabled = false;
+                    document.getElementById("fs_file").value = null;
+                    document.getElementById("fs_update").disabled = true;
+
+                    var responseText = request.responseText;
+                    console.log("\n" + responseText + "\n");
+                    if (responseText.indexOf("Update Success") !== -1) {
+                        window.location.href = "index.html";
+                    } else {
+                        document.getElementById("update_status").innerText = "Update failed";
+                    }
+                }
+            }
+            request.send(formDataFS);
+        }
+
+        function update_device() {
+            showLoading("Updating");
+            http("update", function (responseText) {
+                if (responseText != "success") {
+                    hideLoading();
+                    showFailTip("Update failed");
+                } else {
+                    showLoading("Updating");
+                    setTimeout(function () {
+                        window.location.href = "index.html";
+                    }, 300000);
+                }
+            });
+        }
+        //*/
+    </script>
+</body>
+
+</html>

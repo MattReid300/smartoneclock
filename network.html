@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Network</title>
+    <link rel="stylesheet" type="text/css" href="common.css">
+    </link>
+    <script src="common.js"></script>
+</head>
+
+<body>
+    <div class="header">Smart.One Clock</div>
+    <div class="template1">
+        <div class="buttons">
+            <form action="index.html" target="_self">
+                <button type="submit" class="title_left_button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" id="back-arrow"
+                        class="bi bi-arrow-left-short" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5" />
+                    </svg>
+                    <span>Main Menu</span>
+                </button>
+            </form>
+            <button onclick='network_settings_save()' class="title_right_button">Save</button>
+        </div>
+        <div class="page_title">Network</div>
+        <div class='page_content'>
+            <div class="page_group">
+                <div class="list_view" id="wifi_list"></div>
+                <div id="process_text" class="my_tip_text">Choose an AP or manually edit</div>
+            </div>
+            <div class="page_group">
+                <div class="select_item">
+                    <label class="menu_title">WIFI name</label>
+                    <input id='SSID' name='SSID' value='' type='text' />
+                </div>
+                <div class="select_item">
+                    <label class="menu_title">WIFI password</label>
+                    <div class="password-holder">
+                        <input id='PASSWORD' name='PASSWORD' value='' type='password' />
+                        <span class="toggle-password" id="togglePassword">
+                            <svg xmlns="http://www.w3.org/2000/svg" onclick='onTogglePassword()' width="16" height="16"
+                                fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                                <path
+                                    d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z" />
+                                <path
+                                    d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />
+                            </svg>
+                            <!-- <span onclick='onTogglePassword()'>&#128065;</span> -->
+                            <!-- <p>heyyyyyyyyyyyyyyyyyyyyy</p> -->
+                            <!-- onclick='onTogglePassword()' -->
+                        </span>
+                    </div>
+                </div>
+                <div class="select_item">
+                    <label class="menu_title" style="width: 60%;">Turn off WIFI hotspot after 10 minutes since power
+                        on</label>
+                    <select name='APTURNOFF' id='APTURNOFF' style="width: 50px;padding-left: 5px;">
+                        <option value='0'>No</option>
+                        <option value='1'>Yes</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <p class="page_foot">Smart.One Clock</p>
+    </div>
+    <script>
+        function onTogglePassword() {
+            let password = document.getElementById("PASSWORD");
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            // Toggle the eye icon
+            if (type === 'password') {
+                eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="black" stroke-width="2"/><circle cx="12" cy="12" r="3" stroke="black" stroke-width="2"/>';
+            } else {
+                eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="black" stroke-width="2"/> \
+                                    <circle cx="12" cy="12" r="3" stroke="black" stroke-width="2"/> \
+                                    <line x1="4" y1="4" x2="20" y2="20" stroke="black" stroke-width="2"/>';
+            }
+        }
+
+        var pwd_save;
+        window.onload = function () {
+            showLoading();
+            http("wifi_page_init", function (responseText) {
+                hideLoading();
+                let wifi_name = responseText.split("|")[0];
+                let wifi_pwd = responseText.split("|")[1];
+                let auto_off = responseText.split("|")[2];
+                document.getElementById("SSID").value = wifi_name;
+                document.getElementById("PASSWORD").value = wifi_pwd;
+                document.getElementById("APTURNOFF").value = auto_off;
+                pwd_save = wifi_pwd;
+                refresh_wifi_list();
+            });
+        }
+
+        function label_click(e) {
+            let selected_value = e.innerText;
+            if (selected_value.indexOf("[Selected]") == -1) {
+                document.getElementById("PASSWORD").value = "";
+            } else {
+                selected_value = selected_value.replace("[Selected]", "");
+                document.getElementById("PASSWORD").value = pwd_save;
+            }
+            document.getElementById("SSID").value = selected_value;
+        }
+
+        function show_wifi_list(list) {
+            let level5_svg = '<svg width="100" height="100" viewBox="0 0 100 100"> \
+	                            <path d="M 50,100 L  5,100 A 45,45 0 0,1 50,55 Z" fill="black" stroke="black" stroke-width="2" /> \
+                                </svg>';
+            let level4_svg = '<svg width="100" height="100" viewBox="0 0 100 100"> \
+                                <path d="M 50,100 L  5,100 A 45,45 0 0,1 50,55 Z" fill="lightgray" stroke="lightgray" stroke-width="2" /> \
+                                <path d="M 50,100 L 15,100 A 35,35 0 0,1 50,65 Z" stroke="black" stroke-width="2" fill="black" /> \
+                                </svg>';
+            let level3_svg = '<svg width="100" height="100" viewBox="0 0 100 100"> \
+                                <path d="M 50,100 L  5,100 A 45,45 0 0,1 50,55 Z" fill="lightgray" stroke="lightgray" stroke-width="2" /> \
+                                <path d="M 50,100 L 25,100 A 25,25 0 0,1 50,75 Z" stroke="black" stroke-width="2" fill="black" /> \
+                                </svg>';
+            let level2_svg = '<svg width="100" height="100" viewBox="0 0 100 100"> \
+                                <path d="M 50,100 L  5,100 A 45,45 0 0,1 50,55 Z" fill="lightgray" stroke="lightgray" stroke-width="2" /> \
+                                <path d="M 50,100 L 35,100 A 15,15 0 0,1 50,85 Z" stroke="black" stroke-width="2" fill="black" /> \
+                                </svg>';
+            let level1_svg = '<svg width="100" height="100" viewBox="0 0 100 100"> \
+                                <path d="M 50,100 L  5,100 A 45,45 0 0,1 50,55 Z" fill="lightgray" stroke="lightgray" stroke-width="2" /> \
+                                <path d="M 50,100 L 45,100 A 5,5 0 0,1 50,95 Z" stroke="black" stroke-width="2" fill="black" /> \
+                                </svg>';
+            if (list) {
+                let array = list.split(';');
+                for (var i = 0; i < array.length; i++) {
+                    // first char is rssi level.
+                    let name = array[i].slice(1);
+                    let rssi_level = array[i].charAt(0);
+                    let rssi_icon;
+                    if (rssi_level == "5") { rssi_icon = level5_svg; }
+                    else if (rssi_level == "4") { rssi_icon = level4_svg; }
+                    else if (rssi_level == "3") { rssi_icon = level3_svg; }
+                    else if (rssi_level == "2") { rssi_icon = level2_svg; }
+                    else { rssi_icon = level1_svg; }
+                    if (name) {
+                        var current_wifi_name = document.getElementById("SSID").value;
+                        if (current_wifi_name == name) {
+                            name = name + "[Selected]";
+                        }
+                        var append_html = "<div class='list_item' onclick='label_click(this)' tabindex='1'>" + rssi_icon + name + "</div>";
+                        document.getElementById('wifi_list').innerHTML += append_html;
+                    }
+                }
+            } else {
+                document.getElementById('wifi_list').innerHTML = "<div style='margin-top:30%;color:gray;text-align:center'>No wifi found</div>";
+            }
+
+        }
+
+        function refresh_wifi_list() {
+            document.getElementById('wifi_list').innerHTML = "<div style='margin-top:30%;color:gray;text-align:center'>Scanning..</div>";
+            http("wifiscan", function (responseText) {
+                //responseText = "5hello;4world;3mywifi;2wifi;1wifi2;";// for test
+                document.getElementById('wifi_list').innerHTML = "";
+                show_wifi_list(responseText);
+            });
+        }
+
+        function network_settings_save() {
+            showLoading("Saving");
+            let wifi_name = document.getElementById("SSID").value;
+            let wifi_pwd = document.getElementById("PASSWORD").value;
+            let auto_off = document.getElementById("APTURNOFF").value;
+            let params = { "SSID": wifi_name, "PASSWORD": wifi_pwd, "APTURNOFF": auto_off };
+            http("wifi_save_config", function (responseText) {
+                hideLoading();
+                if (responseText == 'success') {
+                    alert('Setup successful! Will restart later');
+                } else {
+                    showFailTip('Setup failed');
+                }
+            }, params);
+        }
+    </script>
+</body>
+
+</html>

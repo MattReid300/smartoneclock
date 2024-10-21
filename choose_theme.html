@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport'
+        content='width=device-width, initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no'>
+    <title>Choose Theme</title>
+    <link rel='stylesheet' type='text/css' href='common.css'>
+    <script src="common.js"></script>
+</head>
+
+<body>
+    <div class="header">Smart.One Clock</div>
+    <div class="template1">
+        <div class="buttons">
+            <form action="settings.html" target="_self">
+                <button type="submit" class="title_left_button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" id="back-arrow"
+                        class="bi bi-arrow-left-short" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5" />
+                    </svg>
+                    <span>Settings</span>
+                </button>
+            </form>
+            <button type='button' onclick='choose_theme_setting_save()' class="title_right_button">Save</button>
+        </div>
+        <div class="page_title">Choose Theme</div>
+        <div class='page_content '>
+            <div class="page_group">
+                <label class="menu_title">Choose theme</label>
+                <select name='theme_d' id='theme_d' onchange="check_ui_change()">
+                    <!--the value for each option is FIXED, DO NOT change it.-->
+                    <option name='ui' value='1'>Default Clock</option>
+                    <option name='ui' value='2'>Digital Clock</option>
+                    <option name='ui' value='3'>Simple Clock</option>
+                    <option name='ui' value='4'>Old Clock</option>
+                    <option name='ui' value='5'>Modern Clock</option>
+                    <option name='ui' value='6'>Funny Clock</option>
+                    <option name='ui' value='9'>Pixelated Clock</option>
+                    <option name='ui' value='7'>Weather Forecast</option>
+                    <option name='ui' value='8'>Photo Album</option>
+                </select>
+            </div>
+        </div>
+        <p class="page_foot">Smart.One Clock</p>
+    </div>
+    <script>
+        function check_ui_change() {
+        }
+
+        window.onload = function () {
+            showLoading();
+            http("choose_theme_page_init", function (responseText) {
+                hideLoading();
+                //responseText="8"; // for test.
+                let theme_id = responseText;
+                document.getElementById("theme_d").value = theme_id;
+            });
+        }
+
+        function choose_theme_setting_save() {
+            showLoading("Saving");
+            let theme_id = document.getElementById("theme_d").value;
+            let params = { "theme_id": theme_id };
+            http("choose_theme_save_config", function (responseText) {
+                hideLoading();
+                if (responseText == 'success') {
+                    showSuccessTip("Save done");
+                } else if (responseText == 'album') {
+                    alert("Upload images from the Pictures section in the Main Menu.");
+                } else {
+                    showFailTip('Save failed');
+                }
+            }, params);
+        }
+    </script>
+</body>
+
+</html>

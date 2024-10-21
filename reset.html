@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang='zh-cn'>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport'
+        content='width=device-width, initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no'>
+    <title>Factory Reset</title>
+    <link rel="stylesheet" type="text/css" href="common.css">
+    </link>
+    <script src="common.js"></script>
+</head>
+
+<body>
+    <div class="header">Smart.One Clock</div>
+    <div class="template1">
+        <div class="buttons">
+            <form action="settings.html" target="_self">
+                <button type="submit" class="title_left_button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" id="back-arrow"
+                        class="bi bi-arrow-left-short" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5" />
+                    </svg>
+                    <span>Settings</span>
+                </button>
+            </form>
+            <button onclick='reset_device()' class="title_right_button reset">Reset</button>
+        </div>
+        <div class="page_title">Factory Reset</div>
+        <div class='page_content'>
+            <div class="page_group">
+                <div>The Device will perform a factory reset. All settings will be set to default.</div>
+            </div>
+        </div>
+        <p class="page_foot">Smart.One Clock</p>
+    </div>
+    <script>
+        function reset_device() {
+            showLoading("Factory Resetting");
+            http("factory_reset", function (responseText) {
+                if (responseText != "success") {
+                    hideLoading();
+                    showFailTip("Reset failed");
+                } else {
+                    setTimeout(function () {
+                        window.location.href = "index.html";
+                    }, 2000);
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

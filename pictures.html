@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Pictures</title>
+    <link rel="stylesheet" type="text/css" href="common.css">
+    </link>
+    <script src="common.js"></script>
+</head>
+
+<body>
+    <div class="header">Smart.One Clock</div>
+    <div class="template1">
+        <div class="buttons">
+            <form action="index.html" target="_self">
+                <button type="submit" class="title_left_button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" id="back-arrow"
+                        class="bi bi-arrow-left-short" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5" />
+                    </svg>
+                    <span>Main Menu</span>
+                </button>
+            </form>
+            <button onclick='pictures_save_config()' class="title_right_button">Save</button>
+        </div>
+        <div class="page_title">Pictures</div>
+        <div class='page_content'>
+            <div class="page_group">
+                <!-- Current photos list -->
+                <div name="photo_view" style="text-align:left;">
+                    <div id='photo_list_div'></div>
+                    <div class="my_tip_text">Tips: Click on the picture to delete it. Only jpg format supported.
+                        Jpeg files must be in 24bit format (8 bit not supported).
+                        Jpeg files in the "Progressive" format (where image data is compressed in multiple passes
+                         with progressively higher detail) are not supported.
+                    </div>
+                    <br>
+                    <div style="color: rgb(45, 45, 45);padding-bottom: 5px;" id="size_of_free"></div>
+                </div>
+                <!-- Upload -->
+                <form name='input' action='upload' method='post' enctype='multipart/form-data'>
+                    <input class='image_upload_input' id='file' accept='.jpg' type='file' multiple='false'
+                        onchange='selectFile()'>
+                    <br />
+                    <p></p>
+                    <input id='upload' type='button' value='Upload' onclick='uploadImage()' disabled="true">
+                    <p id="upload_status"></p>
+                </form>
+                <label class="menu_title">Slide show interval (seconds)</label>
+                <input id='play_time' name='play_time' placeholder="Input seconds (1~1000)" type='number' />
+            </div>
+        </div>
+        <p class="page_foot">Smart.One Clock</p>
+    </div>
+    <script>
+        let free_size_bytes = 0;
+        window.onload = function () {
+            refresh_photo_list();
+        }
+        function show_photo_list(list) {
+            if (list) {
+                document.getElementById('photo_list_div').innerHTML = "";
+                let array = list.split(";");
+                array.forEach(element => {
+                    if (element) {
+                        let append_html = "<img onclick='deleteImage(this)' id='" + element + "' class='photo_list_item'  src='/album/" + element + "'>";
+                        document.getElementById('photo_list_div').innerHTML += append_html;
+                    }
+                });
+            } else {
+                document.getElementById('photo_list_div').innerHTML = "<div class='div_loading_tip'>Album is empty</div>";
+            }
+
+        }
+        function refresh_photo_list() {
+            document.getElementById('photo_list_div').innerHTML = "<div class='div_loading_tip'>Retrieving photo list</div>";
+            http("list_photo", function (result) {
+                document.getElementById('photo_list_div').innerHTML = "<div class='div_loading_tip'>Failed to obtain photo list</div>";
+                if (result) {
+                    let list = result.split("|")[0];
+                    document.getElementById("size_of_free").innerText = "Free space:" + result.split("|")[1];
+                    free_size_bytes = parseInt(result.split("|")[2]);
+                    document.getElementById("play_time").value = result.split("|")[3];
+                    show_photo_list(list);
+                } else {
+                    document.getElementById('photo_list_div').innerHTML = "<div class='div_loading_tip'>Photo list is empty</div>";
+                }
+            });
+        }
+        var formData;
+        // choose photo
+        function selectFile() {
+            formData = new FormData()
+            let file = document.getElementById('file').files[0];
+            let file_type = file.name.split('.')[1];
+            file_type = file_type.toLowerCase();
+            if (file_type != "jpg") {
+                document.getElementById("file").value = null;
+                document.getElementById("upload").disabled = true;
+                alert("Only jpg supported");
+                return;
+            }
+            if (file.size > free_size_bytes) {
+                document.getElementById("file").value = null;
+                document.getElementById("upload").disabled = true;
+                alert("Not enough space");
+                return;
+            }
+            if (file.name.length >= 32) {
+                document.getElementById("file").value = null;
+                document.getElementById("upload").disabled = true;
+                alert("Length of file name should be less than 31");
+                return;
+            }
+            if (file.name.indexOf(' ') >= 0) {
+                document.getElementById("file").value = null;
+                document.getElementById("upload").disabled = true;
+                alert("File name should not have space");
+                return;
+            }
+            document.getElementById("upload").disabled = false;
+            formData.append('files', file, file.name);
+        }
+
+        function deleteImage(image) {
+            var delete_comfirm = confirm("Delete [" + image.id + "]?");
+            if (delete_comfirm) {
+                showLoading("Deleting");
+                http('delete_photo', function (responseText) {
+                    hideLoading();
+                    if (responseText == 'delete_success') {
+                        refresh_photo_list();
+                    } else {
+                        showFailTip('Delete failed');
+                    }
+                }, { "image_id": image.id });
+            }
+        }
+
+        function uploadImage() {
+            http("pre_upload_photo", function (responseText) {
+                //whatever responsed.
+                doUploadImage();
+            });
+        }
+
+        function doUploadImage() {
+            var request = new XMLHttpRequest()
+            request.open('POST', 'upload_photo');
+            request.onloadstart = function () {
+                document.getElementById("upload_status").innerText = "Uploading...";
+                document.getElementById("upload_status").style.color = "#000000";
+                document.getElementById("file").disabled = true;
+                document.getElementById("upload").disabled = true;
+            }
+            request.onreadystatechange = function () {
+                if (request.readyState == XMLHttpRequest.DONE && request.status == 200) {
+                    document.getElementById("upload_status").innerText = "Uploaded";
+                    document.getElementById("upload_status").style.color = "#00ff00";
+                    document.getElementById("file").disabled = false;
+                    document.getElementById("file").value = null;
+                    document.getElementById("upload").disabled = true;
+
+                    var responseText = request.responseText;//respone result
+                    if (responseText == 'upload_success') {
+                        // location.reload();
+                        refresh_photo_list();
+                    } else {
+                        document.getElementById("upload_status").innerText = "Upload failed"
+                        document.getElementById("upload_status").style.color = "#ff0000";
+                    }
+                }
+            }
+            request.send(formData);
+        }
+
+        function pictures_save_config() {
+            let play_time = document.getElementById("play_time").value;
+            if (play_time < 1 || play_time > 1000) {
+                alert("The interval should between 1 to 1000");
+                return;
+            }
+            showLoading('Saving');
+            http("pictures_save_config", function (responseText) {
+                hideLoading();
+                if (responseText == 'success') {
+                    showSuccessTip('Save done');
+                } else {
+                    showFailTip('Save failed');
+                }
+            }, { "play_time": play_time });
+
+        }
+    </script>
+</body>
+
+</html>

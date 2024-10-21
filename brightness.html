@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport'
+        content='width=device-width, initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no'>
+    <title>Brightness</title>
+    <link rel='stylesheet' type='text/css' href='common.css'>
+    <script src="common.js"></script>
+</head>
+
+<body>
+    <div class="header">Smart.One Clock</div>
+    <div class="template1">
+        <div class="buttons">
+            <form action="settings.html" target="_self">
+                <button type="submit" class="title_left_button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" id="back-arrow"
+                        class="bi bi-arrow-left-short" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5" />
+                    </svg>
+                    <span>Settings</span>
+                </button>
+            </form>
+            <button type='button' onclick='brightness_setting_save()' class="title_right_button">Save</button>
+        </div>
+        <div class="page_title">Brightness</div>
+        <div class='page_content'>
+            <div class="page_group">
+                <div class="select_item">
+                    <label class="menu_title">Brightness</label>
+                    <div class="my_group_panel_item">
+                        <input name='brightness' id='brightness' value="50"
+                            style="vertical-align: -6px;padding-left: 0px;" type="range" min="0" max="100" />
+                        <label id="brightness_text">50</label>
+                    </div>
+                </div>
+                <div class="select_item">
+                    <label class="menu_title">Night mode</label>
+                    <input type='checkbox' id='light_off_checkbox' name='light_off_checkbox'
+                        onchange='light_off_toggle(this)' />
+                </div>
+                <div id='light_off_setting_div' hidden>
+                    <div id="nightmode_time_setting_24h" hidden>
+                        <div class="select_item">
+                            <label class="menu_title">Start time</label>
+                            <select name='light_off_begin' id='light_off_begin' class="nightmode_time_select">
+                                <option value='0'>00:00</option>
+                                <option value='1'>01:00</option>
+                                <option value='2'>02:00</option>
+                                <option value='3'>03:00</option>
+                                <option value='4'>04:00</option>
+                                <option value='5'>05:00</option>
+                                <option value='6'>06:00</option>
+                                <option value='7'>07:00</option>
+                                <option value='8'>08:00</option>
+                                <option value='9'>09:00</option>
+                                <option value='10'>10:00</option>
+                                <option value='11'>11:00</option>
+                                <option value='12'>12:00</option>
+                                <option value='13'>13:00</option>
+                                <option value='14'>14:00</option>
+                                <option value='15'>15:00</option>
+                                <option value='16'>16:00</option>
+                                <option value='17'>17:00</option>
+                                <option value='18'>18:00</option>
+                                <option value='19'>19:00</option>
+                                <option value='20'>20:00</option>
+                                <option value='21'>21:00</option>
+                                <option value='22' selected>22:00</option>
+                                <option value='23'>23:00</option>
+                            </select>
+                        </div>
+                        <div class="select_item">
+                            <label class="menu_title">End time</label>
+                            <select name='light_off_end' id='light_off_end' class="nightmode_time_select">
+                                <option value='0'>00:00</option>
+                                <option value='1'>01:00</option>
+                                <option value='2'>02:00</option>
+                                <option value='3'>03:00</option>
+                                <option value='4'>04:00</option>
+                                <option value='5'>05:00</option>
+                                <option value='6'>06:00</option>
+                                <option value='7'>07:00</option>
+                                <option value='8' selected>08:00</option>
+                                <option value='9'>09:00</option>
+                                <option value='10'>10:00</option>
+                                <option value='11'>11:00</option>
+                                <option value='12'>12:00</option>
+                                <option value='13'>13:00</option>
+                                <option value='14'>14:00</option>
+                                <option value='15'>15:00</option>
+                                <option value='16'>16:00</option>
+                                <option value='17'>17:00</option>
+                                <option value='18'>18:00</option>
+                                <option value='19'>19:00</option>
+                                <option value='20'>20:00</option>
+                                <option value='21'>21:00</option>
+                                <option value='22'>22:00</option>
+                                <option value='23'>23:00</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="nightmode_time_setting_12h" hidden>
+                        <div class="select_item">
+                            <label class="menu_title">Start time</label>
+                            <select name='light_off_begin12' id='light_off_begin12' class="nightmode_time_select">
+                                <option value='1'>01:00</option>
+                                <option value='2'>02:00</option>
+                                <option value='3'>03:00</option>
+                                <option value='4'>04:00</option>
+                                <option value='5'>05:00</option>
+                                <option value='6'>06:00</option>
+                                <option value='7'>07:00</option>
+                                <option value='8'>08:00</option>
+                                <option value='9'>09:00</option>
+                                <option value='10' selected>10:00</option>
+                                <option value='11'>11:00</option>
+                                <option value='12'>12:00</option>
+                            </select>
+                            <select name='light_off_begin_ampm' id='light_off_begin_ampm'
+                                class="nightmode_time_select_ampm">
+                                <option value='AM'>AM</option>
+                                <option value='PM' selected>PM</option>
+                            </select>
+                        </div>
+                        <div class="select_item">
+                            <label class="menu_title">End time</label>
+                            <select name='light_off_end12' id='light_off_end12' class="nightmode_time_select">
+                                <option value='1'>01:00</option>
+                                <option value='2'>02:00</option>
+                                <option value='3'>03:00</option>
+                                <option value='4'>04:00</option>
+                                <option value='5'>05:00</option>
+                                <option value='6'>06:00</option>
+                                <option value='7'>07:00</option>
+                                <option value='8' selected>08:00</option>
+                                <option value='9'>09:00</option>
+                                <option value='10'>10:00</option>
+                                <option value='11'>11:00</option>
+                                <option value='12'>12:00</option>
+                            </select>
+                            <select name='light_off_end_ampm' id='light_off_end_ampm'
+                                class="nightmode_time_select_ampm">
+                                <option value='AM' selected>AM</option>
+                                <option value='PM'>PM</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="select_item">
+                        <label class="menu_title">Brightness at night</label>
+                        <div class="my_group_panel_item">
+                            <input name='light_off_value' value="50" id='light_off_value'
+                                style="vertical-align: -6px;padding-left: 0px;" type="range" min="0" max="100" />
+                            <label id="light_off_value_text">50</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p class="page_foot">Smart.One Clock</p>
+    </div>
+    <script>
+        document.getElementById("brightness").addEventListener('input', function () {
+            document.getElementById("brightness_text").textContent = this.value
+        })
+        document.getElementById("light_off_value").addEventListener('input', function () {
+            document.getElementById("light_off_value_text").textContent = this.value
+        })
+        function check_light_mode() {
+            if (document.getElementById('light_off_checkbox').checked) {
+                document.getElementById('light_off_setting_div').hidden = false;
+            } else {
+                document.getElementById('light_off_setting_div').hidden = true;
+            }
+        }
+        window.onload = function () {
+            showLoading();
+            http("brightness_page_init", function (responseText) {
+                hideLoading();
+                //responseText="78|34|0|12|0"; // for test.
+                let brightness = responseText.split("|")[0];
+                document.getElementById("brightness_text").textContent = brightness
+                document.getElementById("brightness").value = brightness
+                let light_off_value = responseText.split("|")[1];
+                if (light_off_value != '-1' && light_off_value != '255') {
+                    document.getElementById('light_off_checkbox').checked = true;
+                    document.getElementById("light_off_value_text").textContent = light_off_value
+                    document.getElementById("light_off_value").value = light_off_value;
+                } else {
+                    document.getElementById('light_off_checkbox').checked = false;
+                }
+
+                let light_off_begin = responseText.split("|")[2];
+                let light_off_end = responseText.split("|")[3];
+                let time_format = responseText.split("|")[4]; // 0 is 12hour-format, 1 is 24hour-format
+                if (time_format == '0') {
+                    document.getElementById("nightmode_time_setting_24h").hidden = true;
+                    document.getElementById("nightmode_time_setting_12h").hidden = false;
+                } else {
+                    document.getElementById("nightmode_time_setting_24h").hidden = false;
+                    document.getElementById("nightmode_time_setting_12h").hidden = true;
+                }
+
+                document.getElementById("light_off_begin").value = light_off_begin;
+                document.getElementById("light_off_end").value = light_off_end;
+
+                let num_begin = Number(light_off_begin);
+                let num_end = Number(light_off_end);
+                if (num_begin == 0) {
+                    document.getElementById("light_off_begin12").value = '12';
+                    document.getElementById("light_off_begin_ampm").value = 'AM';
+                } else if (num_begin > 0 && num_begin <= 11) {
+                    document.getElementById("light_off_begin12").value = num_begin.toString();
+                    document.getElementById("light_off_begin_ampm").value = 'AM';
+                } else if (num_begin == 12) {
+                    document.getElementById("light_off_begin12").value = '12';
+                    document.getElementById("light_off_begin_ampm").value = 'PM';
+                } else if (num_begin > 12) {
+                    let num_begin_new = num_begin - 12;
+                    document.getElementById("light_off_begin12").value = num_begin_new.toString();
+                    document.getElementById("light_off_begin_ampm").value = 'PM';
+                }
+                if (num_end == 0) {
+                    document.getElementById("light_off_end12").value = '12';
+                    document.getElementById("light_off_end_ampm").value = 'AM';
+                } else if (num_end > 0 && num_end <= 11) {
+                    document.getElementById("light_off_end12").value = num_end.toString();
+                    document.getElementById("light_off_end_ampm").value = 'AM';
+                } else if (num_end == 12) {
+                    document.getElementById("light_off_end12").value = '12';
+                    document.getElementById("light_off_end_ampm").value = 'PM';
+                } else if (num_end > 12) {
+                    let num_end_new = num_end - 12;
+                    document.getElementById("light_off_end12").value = num_end_new.toString();
+                    document.getElementById("light_off_end_ampm").value = 'PM';
+                }
+
+                check_light_mode();
+            });
+        }
+
+        function light_off_toggle(e) {
+            check_light_mode();
+        }
+
+        function save(params) {
+            http("brightness_save_config", function (responseText) {
+                hideLoading();
+                if (responseText == 'success') {
+                    showSuccessTip('Save done');
+                } else {
+                    showFailTip('Save failed');
+                }
+            }, params);
+        }
+
+        function brightness_setting_save() {
+            showLoading("Saving");
+            let value = -1, begin = 0, end = 0;
+            if (document.getElementById('light_off_checkbox').checked) {
+                if (document.getElementById("nightmode_time_setting_12h").hidden == false) {
+                    let num_begin = 0, num_end = 0;
+                    let begin12 = document.getElementById('light_off_begin12').value;
+                    let begin_ampm = document.getElementById('light_off_begin_ampm').value;
+                    let end12 = document.getElementById('light_off_end12').value;
+                    let end_ampm = document.getElementById('light_off_end_ampm').value;
+                    if (begin_ampm == "AM") {
+                        num_begin = Number(begin12);
+                        if (num_begin == 12) {
+                            num_begin = 0;
+                        }
+                    } else {
+                        num_begin = Number(begin12);
+                        if (num_begin < 12) {
+                            num_begin += 12;
+                        }
+                    }
+                    if (end_ampm == "AM") {
+                        num_end = Number(end12);
+                        if (num_end == 12) {
+                            num_end = 0;
+                        }
+                    } else {
+                        num_end = Number(end12);
+                        if (num_end < 12) {
+                            num_end += 12;
+                        }
+                    }
+                    begin = num_begin.toString();
+                    end = num_end.toString();
+                } else {
+                    begin = document.getElementById('light_off_begin').value;
+                    end = document.getElementById('light_off_end').value;
+                }
+                //console.log("begin:" + begin + " end: " + end);
+                if (end == begin) {
+                    alert('Start time should not be same as end time');
+                    hideLoading();
+                    return;
+                } else {
+                    value = document.getElementById('light_off_value').value;
+                }
+            }
+            let brightness = document.getElementById('brightness').value;
+            let params = { 'brightness': brightness, 'begin': begin, 'end': end, 'value': value };
+            if (brightness <= 0) {
+                var confirm_save = confirm("Brightness set to 0 means turn off the screen light, are you sure?");
+                if (confirm_save) {
+                    save(params)
+                } else {
+                    hideLoading()
+                }
+            } else {
+                save(params)
+            }
+        }
+    </script>
+</body>
+
+</html>
